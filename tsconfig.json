@@ -2,7 +2,7 @@
   "compilerOptions": {
     "target": "es2022",                           // modern, but Node-compatible
     "module": "nodenext",                         // ESM
-    // "moduleResolution": "node",
+
     "rootDir": "src",                             // source code root
     "outDir": "dist",                             // compiled output
     "sourceMap": true,
@@ -20,10 +20,11 @@
     "noUncheckedSideEffectImports": true,
     "verbatimModuleSyntax": true,
     "moduleDetection": "force",
-    "noEmit": true,
     // Node types (remove [] to get autocomplete for process, fs, etc.)
     "types": ["node"],
+    "emitDeclarationOnly": true,
     "allowImportingTsExtensions": true
   },
-  "include": ["src"]
+  "include": ["src"],
+  "exclude": ["node_modules", "dist"]
 }

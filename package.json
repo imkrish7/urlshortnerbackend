@@ -7,13 +7,18 @@
   "type": "module",
   "main": "/src/index.ts",
   "scripts": {
-    "dev": "tsx watch ./src/index"
+    "dev": "tsx watch ./src/index",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate dev",
+    "build": "tsup src/index.ts --format esm,cjs --dts --clean",
+    "start": "node dist/index.js"
   },
   "devDependencies": {
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.3",
     "@types/node": "^24.5.2",
     "prisma": "^6.16.2",
+    "tsup": "^8.5.0",
     "tsx": "^4.20.5",
     "typescript": "^5.9.2"
   },

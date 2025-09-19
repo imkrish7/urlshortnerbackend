@@ -111,7 +111,7 @@ routes.get("/all", async (req: Request<{}, {}, {}, IPagination>, res: Response) 
     }
 })
 
-routes.post("/validate/:code", async (req: Request, res: Response) => {
+routes.post("/validate/:code/owner", async (req: Request, res: Response) => {
     try {
 
         const { code } = req.params;

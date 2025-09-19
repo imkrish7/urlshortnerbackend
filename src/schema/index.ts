@@ -1,11 +1,53 @@
 import z from "zod";
 
-export const createURLSchema = z.object({
-    url: z.url(),
-    customCode: z.string().length(10).optional(),
-    email: z.email(),
-    secret: z.string().nonoptional(),
-})
+
+export const CreateSchema = z.object({
+	url: z
+		.url()
+		.refine(
+			(val) => {
+				try {
+					const u = new URL(val);
+					// Require at least one dot in the hostname
+
+					if (
+						u.hostname.includes(".") &&
+						!u.hostname.endsWith(".") &&
+						u.hostname.split(".")[1]!.length >= 2
+					) {
+						return true;
+					} else if (
+						(u.hostname === "localhost" ||
+							u.hostname === "127.0.0.1" ||
+							u.hostname === "::1") &&
+						!u.hostname.endsWith(":") &&
+						u.port
+					) {
+						return true;
+					}
+				} catch {
+					return false;
+				}
+			},
+			{
+				message:
+					"Invalid URL — must include a valid domain (e.g. example.com)",
+			}
+		)
+		.optional(),
+	email: z.email(),
+	customCode: z.string().refine(
+		(val) => {
+			if (val.length === 0 || val.length === 10) {
+				return true;
+			} else if (val.length > 10 || val.length < 10) {
+				return false;
+			}
+		},
+		{ error: "Invalid, It should be 10 character long" }
+	),
+	secret: z.string().min(6),
+});
 
 export const validateOwnerSchema = z.object({
     secret: z.string().nonoptional(),
