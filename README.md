@@ -1,3 +1,5 @@
+A URL Shortener Backend Service built with Node.js, TypeScript, PostgreSQL, Prisma, and Docker. It provides APIs to create, manage, and track shortened URLs with features like custom codes, owner verification, click tracking, and secure modification/deletion.
+
 # Backend Setup Guide
 
 ## Requirements
