@@ -39,7 +39,13 @@ docker compose up
 # or run in detached (daemon) mode
 docker compose up -d
 ```
-### 5. Run the app in dev mode
+### 5. ENVIRONMENT VARIABLE REQUIRED
+For this project, for now, if you want to attach a different PostgreSQL server,  it would need to push the migration
+``` env
+DATABASE_URL="postgres://shortener_user:shortener123@localhost:5433/shortener"
+PORT=8080
+```
+### 6. Run the app in dev mode
 ```bash
 npm run dev
 # or
