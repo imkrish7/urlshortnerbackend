@@ -1,0 +1,18 @@
+version: '3.8'
+services:
+  db:
+    image: postgres
+    container_name: shortener_db
+    restart: always
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_DB: shortener
+      POSTGRES_USER: shortener_user
+      POSTGRES_PASSWORD: shortener123
+    volumes:
+      - db:/data/db
+
+volumes:
+  db:
+
