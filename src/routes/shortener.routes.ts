@@ -99,7 +99,8 @@ routes.get("/all", async (req: Request<{}, {}, {}, IPagination>, res: Response) 
                 shortCode: true,
                 shortenURL: true,
                 originalURL: true,
-                clicks: true
+                clicks: true,
+                id: true
             }
         });
 

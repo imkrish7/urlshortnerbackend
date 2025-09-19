@@ -9,19 +9,17 @@ export const createURLSchema = z.object({
 				try {
 					const u = new URL(val);
 					// Require at least one dot in the hostname
-
+					
 					if (
-						u.hostname.includes(".") &&
-						!u.hostname.endsWith(".") &&
-						u.hostname.split(".")[1]!.length >= 2
-					) {
-						return true;
-					} else if (
-						(u.hostname === "localhost" ||
-							u.hostname === "127.0.0.1" ||
-							u.hostname === "::1") &&
-						!u.hostname.endsWith(":") &&
-						u.port
+						((u.hostname.includes(".") &&
+                            !u.hostname.endsWith(".") &&
+							u.hostname.split(".")[1]!.length >= 2) ||
+							((u.hostname === "localhost" ||
+								u.hostname === "127.0.0.1" ||
+								u.hostname === "::1") &&
+								!u.hostname.endsWith(":") &&
+								u.port.length > 0)) &&
+						(u.protocol === "http:" || u.protocol === "https:")
 					) {
 						return true;
 					}
@@ -33,8 +31,7 @@ export const createURLSchema = z.object({
 				message:
 					"Invalid URL — must include a valid domain (e.g. example.com)",
 			}
-		)
-		.optional(),
+		),
 	email: z.email(),
 	customCode: z.string().refine(
 		(val) => {
