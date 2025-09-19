@@ -40,17 +40,58 @@ docker compose up
 docker compose up -d
 ```
 ### 5. ENVIRONMENT VARIABLE REQUIRED
-For this project, for now, if you want to attach a different PostgreSQL server,  it would need to push the migration
+For this project, for now, if you want to attach a different PostgreSQL server,  you would need to push the migration
 ``` env
 DATABASE_URL="postgres://shortener_user:shortener123@localhost:5433/shortener"
 PORT=8080
 ```
-### 6. Run the app in dev mode
+### 6. Prisma setup
+ #### a. To use Prisma with the Prisma client.
+  ```bash
+    npm run generate
+    # or 
+    yarn generate
+ ```
+  #### b. FOR a new PostgreSQL connection where tables are not created(since I have already created the migration, you don't have to do anything here )
+  ```bash
+  npm run migrate
+  # or
+  yarn migrate
+ ```
+#### c. Optionally, verify if the table has been created in the database after running the Docker container. is not created, then migrate first
+```bash
+  npx prisma studio
+```
+#### d. In case Prisma fails to obtain the client event after the generate command, first check if there is a generated directory has been created in the project directory. If it exists, delete it first, then go to /prisma/schema.prisma. 
+``` js
+  generator client {
+    provider = "prisma-client-js"
+  }
+```
+Generator client should look like the above if there is any other field, like a path to the generated directory. First, remove that field, then start following 6(a).
+ 
+### 7. Run the app in dev mode
 ```bash
 npm run dev
 # or
 yarn dev
 ```
+# DEV http://localhost:8080/shortener/<api-ends>
+
+### 6. Run the app in production mode
+  #### a. First build
+  ```bash
+  npm run build
+  # or
+  yarn build
+  ```
+ #### b. Then run the app
+  ```bash
+  npm run start
+  # or
+  yarn start
+  ```
+# Production http://localhost:8080/shortener/<api-ends>
 
 # API ENDS, Schema and Requirements
 
