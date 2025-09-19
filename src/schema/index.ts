@@ -1,7 +1,7 @@
 import z from "zod";
 
 
-export const CreateSchema = z.object({
+export const createURLSchema = z.object({
 	url: z
 		.url()
 		.refine(
