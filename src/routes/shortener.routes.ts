@@ -4,6 +4,8 @@ import { StatusCodes } from "http-status-codes";
 import { prisma } from "../core/db.ts";
 import { generateShortcode } from "../core/shortener.ts";
 import type { IPagination } from "../types/index.ts";
+import type { Prisma, ShortenURL } from "@prisma/client";
+import { boolean } from "zod";
 
 const routes = Router();
 
@@ -89,11 +91,19 @@ routes.get("/availability/:code", async (req: Request, res: Response) => {
 
 routes.get("/all", async (req: Request<{}, {}, {}, IPagination>, res: Response) => {
     try {
-        const { page, limit } = req.query;
-        const skip = (parseInt(page) - 1) * parseInt(limit)
-        const shortenURLs = await prisma.shortenURL.findMany({
+        const { page, limit, cursor, farword} = req.query
+        const pageNumber = parseInt(page) > 0 && !isNaN(parseInt(page))? parseInt(page) : 1;
+        const offset = parseInt(limit) > 0 && !isNaN(parseInt(limit))? parseInt(limit) : 10;
+        const skip = (pageNumber - 1) * offset;
+
+        let isFarword = true;
+        if (farword === "true" || farword === "false") {
+            isFarword = Boolean(farword);
+        }
+
+        let query: Prisma.ShortenURLFindManyArgs= {
             skip,
-            take: parseInt(limit),
+            take: isFarword? offset: -(offset),
             select: {
                 ownerEmail: true,
                 shortCode: true,
@@ -102,9 +112,21 @@ routes.get("/all", async (req: Request<{}, {}, {}, IPagination>, res: Response) 
                 clicks: true,
                 id: true
             }
-        });
+        }
+        if (cursor) {
+            query["skip"] = 1;
+           query["cursor"] = {"id": cursor}
+        }
+        
+        const shortenURLs = await prisma.shortenURL.findMany(query);
 
-        return res.status(StatusCodes.ACCEPTED).json({data: shortenURLs})
+        let nextCursor = null;
+
+        if (shortenURLs !== undefined && shortenURLs.length > 0) {
+            nextCursor = shortenURLs[shortenURLs.length-1]?.id;
+        }
+
+        return res.status(StatusCodes.ACCEPTED).json({data: shortenURLs, cursor: nextCursor})
 
     } catch (error) {
         console.log(error);
