@@ -1,5 +1,8 @@
 
 export interface IPagination{
     page: string,
-    limit: string
+    limit: string,
+    cursor: string,
+    farword: string,
+    search: string
 }
