@@ -42,7 +42,7 @@ export const createURLSchema = z.object({
 			}
 		},
 		{ error: "Invalid, It should be 10 character long" }
-	),
+	).optional(),
 	secret: z.string().min(6),
 });
 

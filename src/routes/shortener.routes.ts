@@ -44,12 +44,12 @@ routes.post("/create", async (req: Request, res: Response) => {
         const shortenURL = `${req.protocol}://${req.host}${req.baseUrl}/__redirect/${code}`
         const createdURL = await prisma.shortenURL.create({
             data: {
-                shortCode: code,
-                originalURL: validateRequestData.data.url,
+                shortCode: code.trim(),
+                originalURL: validateRequestData.data.url.trim(),
                 clicks: 0,
-                shortenURL,
-                ownerEmail: validateRequestData.data.email,
-                secret: validateRequestData.data.secret
+                shortenURL: shortenURL.trim(),
+                ownerEmail: validateRequestData.data.email.trim(),
+                secret: validateRequestData.data.secret.trim()
             }
         })
 
@@ -91,7 +91,7 @@ routes.get("/availability/:code", async (req: Request, res: Response) => {
 
 routes.get("/all", async (req: Request<{}, {}, {}, IPagination>, res: Response) => {
     try {
-        const { page, limit, cursor, farword} = req.query
+        const { page, limit, cursor, farword, search} = req.query
         const pageNumber = parseInt(page) > 0 && !isNaN(parseInt(page))? parseInt(page) : 1;
         const offset = parseInt(limit) > 0 && !isNaN(parseInt(limit))? parseInt(limit) : 10;
         const skip = (pageNumber - 1) * offset;
@@ -117,6 +117,33 @@ routes.get("/all", async (req: Request<{}, {}, {}, IPagination>, res: Response) 
             query["skip"] = 1;
            query["cursor"] = {"id": cursor}
         }
+
+        if (search.length >= 10) {
+            query["where"] = {
+                OR: [
+                    {
+                        ownerEmail: {
+                            equals: search.trim(),
+                            mode: "insensitive"
+                        }
+                    },
+                    {
+                        shortCode: {
+                            equals: search.trim(),
+                            mode: "insensitive"
+                        }
+                    },
+                    {
+                        originalURL: {
+                            equals: search.trim(),
+                            mode: "insensitive"
+                        }
+                    }
+                ]
+            }
+        }
+
+        console.log(query)
         
         const shortenURLs = await prisma.shortenURL.findMany(query);
 
